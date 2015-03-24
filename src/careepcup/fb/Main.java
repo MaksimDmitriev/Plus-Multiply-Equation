@@ -4,52 +4,39 @@ public class Main {
 
     // http://www.careercup.com/question?id=4911380140392448
     public static void main(String[] args) {
-        String equation = "1*5*4+8*9+16";
-        int result = compute(equation);
-        System.out.println(result);
-
         // An equation with +, -, /, *
-        String anotherEquation = "1*5*4+8*9+16/8-9"; // 83
-        double another = computeAnother(anotherEquation);
-        System.out.println(another);
+        // "1*5*4+8*9+16/8-9"; An old equation
+        String equation = "2+7-21-3*2/1"; // 83
+        double result = computeEquation(equation);
+        System.out.println(result);
     }
 
-    static double computeAnother(String equation) {
-        double result = 0.0;
-        String noMinus = equation.replace("-", "+-");
-        String[] byPluses = noMinus.split("\\+");
+    private static double computeEquation(String input) {
+        String[] parts = input.split("(?=[/*])|(?<=[/*])");
+        double result = computeSum(parts[0]);
 
-        for (String multipl : byPluses) {
-            String[] byMultipl = multipl.split("\\*");
-            double multiplResult = 1.0;
-            for (String operand : byMultipl) {
-                if (operand.contains("/")) {
-                    String[] division = operand.split("\\/");
-                    double divident = Double.parseDouble(division[0]);
-                    for (int i = 1; i < division.length; i++) {
-                        divident /= Double.parseDouble(division[i]);
-                    }
-                    multiplResult *= divident;
-                } else {
-                    multiplResult *= Double.parseDouble(operand);
-                }
+        for (int i = 1; i < parts.length; i += 2) {
+            String op = parts[i];
+            double val = computeSum(parts[i + 1]);
+            switch (op) {
+            case "*":
+                result *= val;
+                break;
+            case "/":
+                result /= val;
+                break;
             }
-            result += multiplResult;
         }
-
         return result;
     }
-
-    static int compute(String equation) {
-        int result = 0;
-        String[] byPluses = equation.split("\\+");
-        for (String multipl : byPluses) {
-            String[] byMultipl = multipl.split("\\*");
-            int multiplResult = 1;
-            for (String operand : byMultipl) {
-                multiplResult *= Integer.parseInt(operand);
-            }
-            result += multiplResult;
+    
+    private static double computeSum(String input) {
+        // TODO: write a comment
+        input = input.replace("-", "+-");
+        String []parts = input.split("\\+");
+        double result = 0.0;
+        for (String operand : parts) {
+            result += Double.parseDouble(operand);
         }
         return result;
     }
